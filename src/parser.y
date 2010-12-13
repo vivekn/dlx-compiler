@@ -35,41 +35,23 @@ void reset_unres() {
 	unresolved=0;
 }
 
-char *MNEM,*OP1,*OP2;
+char **MNEM;
 
-void init_tokens1(char *id) {
-	int l = strlen(id);
-	MNEM = (char *) malloc( 20 * l);
-	strcpy(MNEM,id);
+void init_tokens(char *id) {
 	
-}
-
-void init_tokens2(char *id1,char *id2) {
+	MNEM = (char **) calloc(5,20);
+	int i;	
 	
-	int l = strlen(id1)+1;
-	MNEM = (char *) malloc( 20 * l);
-	OP1    = (char *) malloc(20 * l);
-	char *buf1 = (char *) malloc(20 * l);
-	buf1 = strtok(id1," ");
-	strcpy(MNEM,buf1);
-	strcpy(OP1,id2);
+	for(i = 0;i<5;i++) 
+		MNEM[i] = (char *) calloc(20,1);	
+	i=0;	
+	char *temp = (char *) calloc(20,1);
+	temp = strtok(id," ");
+	while(temp) {
+		MNEM[i] = temp;
+		temp = strtok(NULL," ");	
+	}
 	
-
-}
-
-void init_tokens3(char *id1,char *id2,char *id3) {
-	int l = strlen(id1);
-	MNEM = (char *) malloc( 20 * l);
-	OP1    = (char *) malloc(20 * l);
-	OP2    = (char *) malloc(20 * l);
-	char *buf1 = (char *) malloc(20 * l);
-	buf1 = strtok(id1," ");
-	strcpy(MNEM,buf1);
-	buf1 = strtok(id2,",");
-	strcpy(OP1,buf1);
-	strcpy(OP2,id3);
-
-
 }
 
 
@@ -99,7 +81,3 @@ imm : INT
 
 
 %%
-
-
-
-
