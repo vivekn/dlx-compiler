@@ -86,10 +86,10 @@ int code_type_i(char *mnem,char *rsrc , char *rdest, int imm){
 
 }
 /*Type J Instructions*/
-int code_type_j(char *mnem,char *label,int offset){
-	 jc.offset = current_pos -  obj->val;
-
+int code_type_j(char *mnem,char *label,int current_pos){
+	 
 	 obj = getval(OPCODE,mnem);
+	 jc.offset = current_pos -  obj->val;	 
 	 if(obj==(dict *) 0)
 		return 0;
 	 jc.opc = obj->val;

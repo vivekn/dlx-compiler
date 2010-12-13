@@ -7,7 +7,7 @@
 
 %token COMMENT NEWLINE
 %token COMMA REGISTER MEMADDR CHAR INT HEXSTR
-%token MNEMONIC JUMP LABEL LABELR ZEROP ONEOP
+%token MNEM_R MNEM_I MNEM_J LABEL
 %start program
 
 
@@ -15,7 +15,7 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
-#include "cg2.c"
+#include "codegen.c"
 int bytectr,unresolved;
 
 int chk_unres() {
@@ -81,101 +81,14 @@ program:  program instruction
 		 |		
 		;
 
-instruction : LABEL MNEMONIC REGISTER COMMA REGISTER	{	init_tokens3($<id>2,$<id>3,$<id>5);
-														char a[40] = "jxl_";
-													strcat(a,MNEM);
-													putval(a,bytectr);
-													init_tokens3($<id>2,$<id>3,$<id>5);
-													
-													
-														bytectr+= code_2op(MNEM,OP1,OP2);//2OP REG REG
-													}		
-			|LABEL MNEMONIC REGISTER COMMA imm		{init_tokens2($<id>1,$<id>2);
-													char a[40] = "jxl_";
-													strcat(a,MNEM);
-													putval(a,bytectr);
-													init_tokens3($<id>2,$<id>3,$<id>5);
-													
-													 bytectr+= code_2op_reg_imm(MNEM,OP1,atoi(OP2));//2 OP REG IMM
-												}
-			|LABEL MNEMONIC REGISTER COMMA MEMADDR {init_tokens2($<id>1,$<id>2);
-													char a[40] = "jxl_";
-													strcat(a,MNEM);
-													putval(a,bytectr);	init_tokens3($<id>2,$<id>3,$<id>5);//2 OP REG MEM
-														 bytectr+= code_2op_reg_mem(MNEM,OP1,OP2);}
-			|LABEL MNEMONIC MEMADDR COMMA REGISTER {init_tokens2($<id>1,$<id>2);
-													char a[40] = "jxl_";
-													strcat(a,MNEM);
-													putval(a,bytectr);init_tokens3($<id>2,$<id>3,$<id>5);// 2OP REG MEM
-													bytectr+=  code_2op_mem_reg(MNEM,OP1,OP2);}
-			|LABEL ONEOP  MEMADDR					{init_tokens2($<id>1,$<id>2);
-													char a[40] = "jxl_";
-													strcat(a,MNEM);
-													putval(a,bytectr);init_tokens2($<id>2,$<id>3);//1 op mem
-														 bytectr+= code_1op_mem(MNEM,OP1);
-														}			
-			|LABEL ONEOP imm							{init_tokens2($<id>1,$<id>2);
-													char a[40] = "jxl_";
-													strcat(a,MNEM);
-													putval(a,bytectr);init_tokens2($<id>2,$<id>3);//1 op imm
-													bytectr+=code_1op_imm(MNEM,OP1);																
-														}			
-			|LABEL ONEOP  REGISTER						{init_tokens2($<id>1,$<id>2);
-													char a[40] = "jxl_";
-													strcat(a,MNEM);
-													putval(a,bytectr);init_tokens2($<id>2,$<id>3);
-													  bytectr+= code_1op(MNEM,OP1);			//1 op reg
-														}
-						
-			|LABEL ZEROP								{init_tokens2($<id>1,$<id>2);
-													char a[40] = "jxl_";
-													strcat(a,MNEM);
-													putval(a,bytectr);init_tokens1($<id>2);
-													   bytectr+= code_0op(MNEM);//0 op
-																	}			
-					
-			|JUMP LABEL								{    
-														char a[40] = "jxl_";
-														int res = getval(strcat(a,$<id>2));
-														if(res!=-1){
-															
-															unresolved--;
-															bytectr+=code_jump(MNEM,res-bytectr);
-															//call jump code fn with param = res-bytectr														
-															}
-														else{unresolved++;}
-														}
-			|MNEMONIC REGISTER COMMA REGISTER	{	init_tokens3($<id>1,$<id>2,$<id>4);
-													
-														bytectr+= code_2op(MNEM,OP1,OP2);//2OP REG REG
-													}		
-			|MNEMONIC REGISTER COMMA imm		{
-													init_tokens3($<id>1,$<id>2,$<id>4);
-													
-													 bytectr+= code_2op_reg_imm(MNEM,OP1,atoi(OP2));//2 OP REG IMM
-												}
-			|MNEMONIC REGISTER COMMA MEMADDR {	init_tokens3($<id>1,$<id>2,$<id>4);//2 OP REG MEM
-														 bytectr+= code_2op_reg_mem(MNEM,OP1,OP2);}
-			|MNEMONIC MEMADDR COMMA REGISTER {init_tokens3($<id>1,$<id>2,$<id>4);// 2OP REG MEM
-													bytectr+=  code_2op_mem_reg(MNEM,OP1,OP2);}
-			|ONEOP MEMADDR					{      
-                                                                                                                 init_tokens2($<id>1,$<id>2);//1 op mem
-														 														
-														 bytectr+= code_1op_mem(MNEM,OP1);
-																												
-														}			
-			|ONEOP imm							{init_tokens2($<id>1,$<id>2);//1 op imm
-													  bytectr+= code_1op_imm(MNEM,OP1);																
-														}					
-			|ONEOP REGISTER 				{
-													  init_tokens2($<id>1,$<id>2);
-													  bytectr+= code_1op(MNEM,OP1);			//1 op reg
-														}
-				
-			|ZEROP								{init_tokens1($<id>1);
-													   bytectr+= code_0op(MNEM);//0 op
-																	}
-			
+instruction : MNEM_R REGISTER REGISTER REGISTER	{ 
+												
+						 }
+				 |MNEM_J LABEL
+				 |MNEM_I REGISTER REGISTER imm
+				 |LABEL MNEM_R REGISTER REGISTER REGISTER
+				 |LABEL MNEM_J LABEL
+				 |LABEL MNEM_I REGISTER REGISTER imm
 			;												
 				
 

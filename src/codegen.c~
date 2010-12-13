@@ -86,7 +86,7 @@ int code_type_i(char *mnem,char *rsrc , char *rdest, int imm){
 
 }
 /*Type J Instructions*/
-int code_type_j(char *mnem,char *label,int offset){
+int code_type_j(char *mnem,char *label,int current_pos){
 	 jc.offset = current_pos -  obj->val;
 
 	 obj = getval(OPCODE,mnem);
