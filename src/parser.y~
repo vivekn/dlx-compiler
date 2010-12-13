@@ -44,13 +44,13 @@ void init_tokens(char *id) {
 	
 	for(i = 0;i<5;i++) 
 		MNEM[i] = (char *) calloc(20,1);	
+	i=0;	
 	char *temp = (char *) calloc(20,1);
 	temp = strtok(id," ");
 	while(temp) {
-			
-	
+		MNEM[i] = temp;
+		temp = strtok(NULL," ");	
 	}
-	strcpy(MNEM,id);
 	
 }
 
@@ -64,12 +64,23 @@ program:  program instruction
 		;
 
 instruction : MNEM_R REGISTER REGISTER REGISTER	{ 
-												
+						init_tokens($<id>1);
+						byte_ctr += code_type_r(MNEM[0],MNEM[1],MNEM[2],MNEM[3]);	
 						 }
-				 |MNEM_J LABEL
-				 |MNEM_I REGISTER REGISTER imm
+				 |MNEM_J LABEL	{
+				 		init_tokens($<id>1);
+				 		dict *obj = getval(OPCODE,MNEM[1]);
+				 		if (obj==(dict *) 0)
+				 			unresolved++;
+				 		else
+				 			byte_ctr += code_type_j(MNEM[0],byte_ctr);	
+						}
+				 		
+				 |MNEM_I REGISTER REGISTER imm	{
+				 		init_tokens($<id>1);
+						byte_ctr += code_type_i(MNEM[0],MNEM[1],atoi(MNEM[2]));	
+						}
 				 |LABEL MNEM_R REGISTER REGISTER REGISTER
-				 |LABEL MNEM_J LABEL
 				 |LABEL MNEM_I REGISTER REGISTER imm
 			;												
 				

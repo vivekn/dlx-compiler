@@ -68,6 +68,7 @@ int hash (char *string) {
 
 void putval ( int table_id , char *key,int sval )
 {	
+	/* For inserting a key into the table with integer value */
 	char * key_name = (char *) malloc(80 * sizeof(char));
 	key_name = add_prefix(table_id,key);
 	int hsh = hash(key_name);	
@@ -76,8 +77,7 @@ void putval ( int table_id , char *key,int sval )
 	ptr->name = (char *) malloc (strlen(key_name)+1);
 	ptr->val = sval;
 	strcpy (ptr->name,key_name);
-	
-	
+		
 	ptr->next = (struct dict *)table[hsh];
 	table[hsh] = ptr;
 	
@@ -85,6 +85,7 @@ void putval ( int table_id , char *key,int sval )
 
 void tputval ( int table_id , char *key,int sval,char stype)
 {	
+	/* For inserting a key into the table with character value and an integer value */
 	char * key_name = (char *) malloc(80 * sizeof(char));
 	key_name = add_prefix(table_id,key);
 	int hsh = hash(key_name);	
