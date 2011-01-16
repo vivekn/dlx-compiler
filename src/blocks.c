@@ -36,12 +36,12 @@ void tsort() {
   /* Perform a topological sort on the stack */
 }
 
-int checkDependency(instruction A,instruction B) {
-  /* Check for the following dependencies between 2 instructions: */
+int checkDependency(instruction first,instruction second) {
+  /* Check for dependencies between 2 instructions: */
   
   /*find which instruction appears first*/
-  instruction first = A.line_no>B.line_no?B:A;
-  instruction second = first==B?A:B;
+  if (first.line_no>second.line_no)
+    return 0; // No dependency
 
   /* 1.Read after write */
   if (first.dest == second.source1 ||first.dest == second.source2)
