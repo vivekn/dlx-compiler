@@ -38,9 +38,22 @@ void tsort() {
 
 int checkDependency(instruction A,instruction B) {
   /* Check for the following dependencies between 2 instructions: */
-    
+  
+  /*find which instruction appears first*/
+  instruction first = A.line_no>B.line_no?B:A;
+  instruction second = first==B?A:B;
+
   /* 1.Read after write */
+  if (first.dest == second.source1 ||first.dest == second.source2)
+    return 1; //Dependency exists
+  
   /* 2.Write after read */
+  if (first.source1 == second.dest || first.source2 == second.dest )
+    return 1; //Dependency exists
   /* 3.Write after write */
+  if (first.dest == second.dest)
+    return 1; //Dependency exists
+
+  return 0; // No dependency found
 
 }
